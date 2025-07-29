@@ -29,12 +29,12 @@ def start(message):
 def callback(call):
     jogo = call.data
     comandos = {
-        "show": "//showdomilhao",
-        "forca": "//jogodaforca",
-        "emotions": "//jogodoemotions"
+        "show": "/quiz",
+        "forca": "/jogodaforca",
+        "emotions": "/jogodoemotions"
     }
-    resposta = f"✅ Para jogar, envie:\n\n`{comandos.get(jogo, '//comando')}`"
-    bot.send_message(call.message.chat.id, resposta, parse_mode="Markdown")
+    comando = comandos.get(jogo, '/comando')
+    bot.send_message(call.message.chat.id, comando)
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
