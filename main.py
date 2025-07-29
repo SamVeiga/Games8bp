@@ -30,7 +30,7 @@ def callback(call):
     jogo = call.data
     comandos = {
         "show": "/quiz",
-        "forca": "/jogodaforca",
+        "forca": "/forca",
         "emotions": "/jogodoemotions"
     }
     comando = comandos.get(jogo, '/comando')
