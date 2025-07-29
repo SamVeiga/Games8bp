@@ -39,7 +39,7 @@ def callback(call):
 # =======================================
 # WEBHOOK — Para funcionar no Render
 # =======================================
-@app.route('/' + TOKEN, methods=['POST'])
+@app.route('/' + TOKEN, methods=['POST']) 
 def webhook():
     update = telebot.types.Update.de_json(request.get_data().decode("utf-8"))
     bot.process_new_updates([update])
