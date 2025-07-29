@@ -1,57 +1,50 @@
 from flask import Flask, request
 import telebot
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# 🔐 Coloque aqui o token que o BotFather te deu
+TOKEN = os.environ.get("BOT_TOKEN", "COLE_SEU_TOKEN_AQUI")
+bot = telebot.TeleBot(TOKEN)
 
-API_TOKEN = os.getenv("API_TOKEN")
-bot = telebot.TeleBot(API_TOKEN)
+# ✅ Comando /start
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, "🎮 Olá! Eu sou o bot de jogos!\nUse /jogar para ver os jogos disponíveis.")
+
+# ✅ Comando /ajuda
+@bot.message_handler(commands=['ajuda'])
+def ajuda(message):
+    texto = (
+        "📋 Comandos disponíveis:\n"
+        "/jogar - Iniciar jogo\n"
+        "/placar - Ver pontuação\n"
+        "/regras - Ver regras dos jogos"
+    )
+    bot.reply_to(message, texto)
+
+# ✅ Comando /jogar
+@bot.message_handler(commands=['jogar'])
+def jogar(message):
+    jogos = [
+        "1️⃣ Show do Milhão",
+        "2️⃣ Jogo da Forca",
+        "3️⃣ Quiz Relâmpago"
+    ]
+    resposta = "Escolha o jogo que deseja jogar:\n\n" + "\n".join(jogos)
+    bot.reply_to(message, resposta)
+
+# ✅ Flask + Webhook
 app = Flask(__name__)
 
-# Lista de jogos
-jogos = [
-    {"nome": "🎯 Show do Milhão", "comando": "//show"},
-    {"nome": "🪢 Jogo da Forca", "comando": "//forca"},
-    {"nome": "😃 Jogo dos Emotions", "comando": "//emotions"}
-]
-
-# Mensagem com os botões
-def montar_mensagem_jogos():
-    markup = telebot.types.InlineKeyboardMarkup(row_width=1)
-    for jogo in jogos:
-        btn = telebot.types.InlineKeyboardButton(text=jogo["nome"], callback_data=jogo["comando"])
-        markup.add(btn)
-    return markup
-
-# Comando para exibir os jogos
-@bot.message_handler(commands=['jogos'])
-def enviar_lista_jogos(message):
-    bot.send_message(
-        message.chat.id,
-        "🎮 *Jogos Disponíveis*\n\nEscolha abaixo o jogo que você quer iniciar:",
-        reply_markup=montar_mensagem_jogos(),
-        parse_mode="Markdown"
-    )
-
-# Quando a pessoa clica no botão
-@bot.callback_query_handler(func=lambda call: True)
-def tratar_callback(call):
-    bot.answer_callback_query(call.id, f"Use o comando: {call.data}")
-
-# Webhook
-@app.route(f'/{API_TOKEN}', methods=['POST'])
-def receber_mensagem():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "ok", 200
-
-@app.route("/", methods=["GET"])
+@app.route('/', methods=['GET'])
 def home():
-    return "Bot Games8bp está rodando!", 200
+    return 'Bot de jogos está online!'
 
-# Iniciar
-import os
+@app.route('/', methods=['POST'])
+def receive_update():
+    update = telebot.types.Update.de_json(request.stream.read().decode("utf-8"))
+    bot.process_new_updates([update])
+    return 'OK', 200
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Render fornece PORT dinamicamente
-    app.run(host='0.0.0.0', port=port)
+    app.run()
