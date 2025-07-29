@@ -5,7 +5,7 @@ import os
 # =======================================
 # CONFIGURAÇÕES INICIAIS
 # =======================================
-TOKEN = os.getenv("BOT_TOKEN") or "COLE_SEU_TOKEN_AQUI"
+TOKEN = os.getenv("BOT_TOKEN") or "{"ok":true,"result":true,"description":"O webhook já está definido"}"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
