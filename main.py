@@ -16,9 +16,9 @@ app = Flask(__name__)
 def start(message):
     markup = telebot.types.InlineKeyboardMarkup(row_width=1)
     markup.add(
-        telebot.types.InlineKeyboardButton("🎯 Show do Milhão", callback_data="show"),
+        telebot.types.InlineKeyboardButton("🎯 Jogo do Quiz", callback_data="show"),
         telebot.types.InlineKeyboardButton("🪢 Jogo da Forca", callback_data="forca"),
-        telebot.types.InlineKeyboardButton("😄 Jogo dos Emotions", callback_data="emotions")
+        telebot.types.InlineKeyboardButton("🙈🙉🙊 Jogo dos Emotions", callback_data="emotions")
     )
     bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
 
