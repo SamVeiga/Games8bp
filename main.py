@@ -20,7 +20,7 @@ def start(message):
         telebot.types.InlineKeyboardButton("🪢 Jogo da Forca", callback_data="forca"),
         telebot.types.InlineKeyboardButton("😄 Jogo dos Emotions", callback_data="emotions")
     )
-    bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
+    bot.send_message(message.chat.id, "🎮 Escolha um Jogo", reply_markup=markup)
 
 # =======================================
 # Quando clica em um botão do menu
