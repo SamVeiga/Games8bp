@@ -1,8 +1,7 @@
 from flask import Flask, request
 import telebot
 import os
-
-# Tradução automática
+import json
 from deep_translator import GoogleTranslator
 import langdetect
 
@@ -14,19 +13,27 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 # =======================================
-# COMANDO / jogos — Mostra o menu de jogos
+# LER COMANDOS UNO DE JSON
+# =======================================
+with open("comandos_uno.json", "r", encoding="utf-8") as f:
+    comandos_uno = json.load(f)
+
+# =======================================
+# COMANDO /jogos — Mostra o menu de jogos
 # =======================================
 @bot.message_handler(commands=['jogos'])
-def jogos(message):
+def menu_de_jogos(message):
     markup = telebot.types.InlineKeyboardMarkup(row_width=1)
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
         telebot.types.InlineKeyboardButton("🪢  Jogo da Forca", callback_data="forca"),
-        telebot.types.InlineKeyboardButton("🃏 Jogo do UNO", callback_data="/start")
+        telebot.types.InlineKeyboardButton("🙊  Jogo dos Emojis", callback_data="emotions"),
+        telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", url="https://t.me/UnoGameBot")
     )
     bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
+
 # =======================================
-# Quando clica em um botão do menu
+# BOTÕES DO MENU
 # =======================================
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
@@ -40,40 +47,16 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# MENSAGENS — Tradução automática para UNO Bot e bots oficiais
+# DETECTA COMANDOS DO UNO BOT
 # =======================================
-@bot.message_handler(func=lambda m: True)
-def traduzir_mensagens(message):
-    texto = message.text
-    if not texto:
-        return
-
-    # Ignora mensagens do próprio bot para evitar loop
-    if message.from_user and message.from_user.id == bot.get_me().id:
-        return
-
-    # Traduz mensagens do UNO Bot pelo username 'unobot'
-    if message.from_user and message.from_user.username and message.from_user.username.lower() == "unobot":
-        try:
-            traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
-            bot.reply_to(message, f"🔁 {traducao}")
-        except Exception as e:
-            print(f"Erro ao traduzir UNO Bot: {e}")
-        return
-
-    # Traduz mensagens de bots oficiais (is_bot == True)
-    if message.from_user and message.from_user.is_bot:
-        try:
-            try:
-                idioma = langdetect.detect(texto)
-            except:
-                idioma = 'desconhecido'
-
-            if idioma != 'pt':
-                traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
-                bot.reply_to(message, f"🔁 {traducao}")
-        except Exception as e:
-            print(f"Erro ao traduzir bot oficial: {e}")
+@bot.message_handler(func=lambda message: message.text and message.text.startswith('/') and '@unobot' in message.text.lower())
+def traduzir_comando_unobot(message):
+    comando = message.text.strip().lower()
+    resposta = comandos_uno.get(comando)
+    if resposta:
+        bot.reply_to(message, f"💬 {resposta}")
+    else:
+        bot.reply_to(message, "❓ Comando do UNO Bot detectado, mas ainda sem tradução cadastrada.")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
