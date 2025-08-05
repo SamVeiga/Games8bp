@@ -1,9 +1,8 @@
+
 from flask import Flask, request
 import telebot
 import os
 import json
-from deep_translator import GoogleTranslator
-import langdetect
 
 # =======================================
 # CONFIGURAÇÕES INICIAIS
@@ -13,13 +12,7 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 # =======================================
-# LER COMANDOS UNO DE JSON
-# =======================================
-with open("comandos_uno.json", "r", encoding="utf-8") as f:
-    comandos_uno = json.load(f)
-
-# =======================================
-# COMANDO /jogos — Mostra o menu de jogos
+# MENU DE JOGOS — /jogos
 # =======================================
 @bot.message_handler(commands=['jogos'])
 def menu_de_jogos(message):
@@ -47,19 +40,28 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# DETECTA COMANDOS DO UNO BOT
+# Tradução do UNO Bot — com frases_unobot.json
 # =======================================
-# Corrigir barra dos comandos para evitar clique
+try:
+    with open("frases_unobot.json", "r", encoding="utf-8") as f:
+        frases_uno = json.load(f)
+except Exception as e:
+    frases_uno = {}
+    print(f"[ERRO] Não foi possível carregar frases_unobot.json: {e}")
+
+# Substitui / por ⧸ para evitar links clicáveis
 def evitar_clique_comando(texto):
     return texto.replace("/", "⧸")
 
+# Detecta e traduz mensagens do UNO Bot
 @bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot" and m.text)
 def traduzir_mensagem_unobot(message):
-    texto = message.text.strip()
-    traducao = frases_uno.get(texto)
-    if traducao:
+    texto_original = message.text.strip()
+    if texto_original in frases_uno:
+        traducao = frases_uno[texto_original]
         texto_seguro = evitar_clique_comando(traducao)
         bot.reply_to(message, f"🇧🇷 {texto_seguro}")
+
 # =======================================
 # WEBHOOK — Para funcionar no Render
 # =======================================
