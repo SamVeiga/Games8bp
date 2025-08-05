@@ -22,7 +22,7 @@ def jogos(message):
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
         telebot.types.InlineKeyboardButton("🪢  Jogo da Forca", callback_data="forca"),
-        telebot.types.InlineKeyboardButton("🙊  Jogo dos Emojis", callback_data="emotions")
+        telebot.types.InlineKeyboardButton("🃏 Jogo do UNO", callback_data="/start")
     )
     bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
 # =======================================
