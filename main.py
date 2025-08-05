@@ -41,7 +41,7 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# MENSAGENS — Tradução automática de bots
+# MENSAGENS — Tradução automática de bots (qualquer texto que não seja português)
 # =======================================
 @bot.message_handler(func=lambda m: True)
 def traduzir_mensagens_de_bots(message):
@@ -49,10 +49,15 @@ def traduzir_mensagens_de_bots(message):
     if not texto:
         return
 
-    # Só traduz se for mensagem de outro BOT
+    # Só traduz mensagens de outros bots
     if message.from_user and message.from_user.is_bot:
         try:
-            idioma = langdetect.detect(texto)
+            # Detecta idioma, tenta traduzir mesmo se falhar a detecção
+            try:
+                idioma = langdetect.detect(texto)
+            except:
+                idioma = 'desconhecido'
+
             if idioma != 'pt':
                 traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
                 bot.reply_to(message, f"🔁 {traducao}")
