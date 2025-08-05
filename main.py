@@ -14,10 +14,10 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 # =======================================
-# COMANDO /start — Mostra o menu de jogos
+# COMANDO / jogos — Mostra o menu de jogos
 # =======================================
-@bot.message_handler(commands=['start'])
-def start(message):
+@bot.message_handler(commands=['jogos'])
+def jogos(message):
     markup = telebot.types.InlineKeyboardMarkup(row_width=1)
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
@@ -25,7 +25,6 @@ def start(message):
         telebot.types.InlineKeyboardButton("🙊  Jogo dos Emojis", callback_data="emotions")
     )
     bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
-
 # =======================================
 # Quando clica em um botão do menu
 # =======================================
