@@ -2,6 +2,10 @@ from flask import Flask, request
 import telebot
 import os
 
+# Tradução automática
+from deep_translator import GoogleTranslator
+import langdetect
+
 # =======================================
 # CONFIGURAÇÕES INICIAIS
 # =======================================
@@ -37,9 +41,28 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
+# MENSAGENS — Tradução automática de bots
+# =======================================
+@bot.message_handler(func=lambda m: True)
+def traduzir_mensagens_de_bots(message):
+    texto = message.text
+    if not texto:
+        return
+
+    # Só traduz se for mensagem de outro BOT
+    if message.from_user and message.from_user.is_bot:
+        try:
+            idioma = langdetect.detect(texto)
+            if idioma != 'pt':
+                traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
+                bot.reply_to(message, f"🔁 {traducao}")
+        except Exception as e:
+            print(f"Erro ao traduzir: {e}")
+
+# =======================================
 # WEBHOOK — Para funcionar no Render
 # =======================================
-@app.route('/' + TOKEN, methods=['POST'])  # ← CORRIGIDO AQUI!
+@app.route('/' + TOKEN, methods=['POST'])
 def webhook():
     update = telebot.types.Update.de_json(request.get_data().decode("utf-8"))
     bot.process_new_updates([update])
