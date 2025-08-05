@@ -49,15 +49,17 @@ def callback(call):
 # =======================================
 # DETECTA COMANDOS DO UNO BOT
 # =======================================
-@bot.message_handler(func=lambda message: message.text and message.text.startswith('/') and '@unobot' in message.text.lower())
-def traduzir_comando_unobot(message):
-    comando = message.text.strip().lower()
-    resposta = comandos_uno.get(comando)
-    if resposta:
-        bot.reply_to(message, f"💬 {resposta}")
-    else:
-        bot.reply_to(message, "❓ Comando do UNO Bot detectado, mas ainda sem tradução cadastrada.")
+# Corrigir barra dos comandos para evitar clique
+def evitar_clique_comando(texto):
+    return texto.replace("/", "⧸")
 
+@bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot" and m.text)
+def traduzir_mensagem_unobot(message):
+    texto = message.text.strip()
+    traducao = frases_uno.get(texto)
+    if traducao:
+        texto_seguro = evitar_clique_comando(traducao)
+        bot.reply_to(message, f"🇧🇷 {texto_seguro}")
 # =======================================
 # WEBHOOK — Para funcionar no Render
 # =======================================
