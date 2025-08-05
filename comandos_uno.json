@@ -1,0 +1,20 @@
+{
+  "/start@unobot": "▶️ Iniciar uma nova partida.",
+  "/join@unobot": "➕ Entrar na partida atual.",
+  "/leave@unobot": "👋 Sair da partida.",
+  "/close@unobot": "🔒 Fechar o lobby da partida (ninguém mais pode entrar).",
+  "/open@unobot": "🔓 Reabrir o lobby da partida (permite novas entradas).",
+  "/end@unobot": "🛑 Encerrar a partida atual.",
+  "/kick@unobot": "🚫 Expulsar um jogador. Responda à mensagem da pessoa para isso.",
+  "/skip@unobot": "⏩ Pular a vez do jogador atual.",
+  "/multion@unobot": "📣 Ativar notificações de múltiplas jogadas.",
+  "/multioff@unobot": "🔕 Desativar notificações de múltiplas jogadas.",
+  "/alert@unobot": "🔔 Ativar alerta quando houver nova partida.",
+  "/howto@unobot": "📘 Como jogar o UNO com este bot.",
+  "/modes@unobot": "🎲 Explicação sobre os modos de jogo.",
+  "/settings@unobot": "⚙️ Idioma e outras configurações.",
+  "/about@unobot": "ℹ️ Todas as informações sobre o UNO Bot.",
+  "/source@unobot": "💻 Ver o código-fonte deste bot.",
+  "/news@unobot": "📰 Ver novidades recentes sobre o bot.",
+  "/ranking@unobot": "🏆 Ver a classificação do grupo."
+}
