@@ -1,8 +1,9 @@
-
 from flask import Flask, request
 import telebot
 import os
 import json
+from deep_translator import GoogleTranslator
+import langdetect
 
 # =======================================
 # CONFIGURAÇÕES INICIAIS
@@ -12,7 +13,13 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 # =======================================
-# MENU DE JOGOS — /jogos
+# LER COMANDOS UNO DE JSON
+# =======================================
+with open("comandos_uno.json", "r", encoding="utf-8") as f:
+    comandos_uno = json.load(f)
+
+# =======================================
+# COMANDO /jogos — Mostra o menu de jogos
 # =======================================
 @bot.message_handler(commands=['jogos'])
 def menu_de_jogos(message):
@@ -40,27 +47,16 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# Tradução do UNO Bot — com frases_unobot.json
+# DETECTA COMANDOS DO UNO BOT
 # =======================================
-try:
-    with open("frases_unobot.json", "r", encoding="utf-8") as f:
-        frases_uno = json.load(f)
-except Exception as e:
-    frases_uno = {}
-    print(f"[ERRO] Não foi possível carregar frases_unobot.json: {e}")
-
-# Substitui / por ⧸ para evitar links clicáveis
-def evitar_clique_comando(texto):
-    return texto.replace("/", "⧸")
-
-# Detecta e traduz mensagens do UNO Bot
-@bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot" and m.text)
-def traduzir_mensagem_unobot(message):
-    texto_original = message.text.strip()
-    if texto_original in frases_uno:
-        traducao = frases_uno[texto_original]
-        texto_seguro = evitar_clique_comando(traducao)
-        bot.reply_to(message, f"🇧🇷 {texto_seguro}")
+@bot.message_handler(func=lambda message: message.text and message.text.startswith('/') and '@unobot' in message.text.lower())
+def traduzir_comando_unobot(message):
+    comando = message.text.strip().lower()
+    resposta = comandos_uno.get(comando)
+    if resposta:
+        bot.reply_to(message, f"💬 {resposta}")
+    else:
+        bot.reply_to(message, "❓ Comando do UNO Bot detectado, mas ainda sem tradução cadastrada.")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
