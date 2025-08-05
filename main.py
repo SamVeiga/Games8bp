@@ -1,3 +1,4 @@
+
 from flask import Flask, request
 import telebot
 import os
@@ -38,33 +39,51 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# BALÃO DE AJUDA — Enviado sempre que o UNO Bot fala
+# BALÃO DE AJUDA FIXO — Toda vez que o UNO Bot responder
 # =======================================
 ajuda_texto = (
-    "📘 *Comandos do UNO Bot*\n\n"
-    "`/join` ➕ Entrar\n"
-    "`/start` ▶️ Iniciar\n"
-    "`/skip` ⏩ Pular vez\n"
-    "`/kick` 👢 Expulsar\n"
-    "`/leave` 🚪 Sair\n"
-    "`/close` 🔒 Fechar lobby\n"
-    "`/open` 🔓 Reabrir lobby\n"
-    "`/ranking` 🏆 Pontuação\n"
-    "`/modes` 🎮 Modos de jogo\n"
-    "`/howto` 📘 Regras\n"
-    "`/settings` ⚙️ Regras/config\n"
-    "`/alert` 🔔 Notificar\n"
-    "`/multion` 📣 Múltiplos alertas\n"
-    "`/multioff` 🔕 Sem alertas\n"
-    "`/about` ℹ️ Sobre o bot\n"
-    "`/source` 💻 Código-fonte\n"
+    "📘 *Comandos do UNO Bot*
+
+"
+    "`/join` ➕ Entrar
+"
+    "`/start` ▶️ Iniciar
+"
+    "`/skip` ⏩ Pular vez
+"
+    "`/kick` 👢 Expulsar
+"
+    "`/leave` 🚪 Sair
+"
+    "`/close` 🔒 Fechar lobby
+"
+    "`/open` 🔓 Reabrir lobby
+"
+    "`/ranking` 🏆 Pontuação
+"
+    "`/modes` 🎮 Modos de jogo
+"
+    "`/howto` 📘 Regras
+"
+    "`/settings` ⚙️ Regras/config
+"
+    "`/alert` 🔔 Notificar
+"
+    "`/multion` 📣 Múltiplos alertas
+"
+    "`/multioff` 🔕 Sem alertas
+"
+    "`/about` ℹ️ Sobre o bot
+"
+    "`/source` 💻 Código-fonte
+"
     "`/news` 📰 Novidades"
 )
 
 ultimo_balao_id = {}
 
-@bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot" and m.text)
-def mostrar_balao_ajuda(message):
+@bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot")
+def balao_ajuda_unobot(message):
     chat_id = message.chat.id
     try:
         if chat_id in ultimo_balao_id:
@@ -72,7 +91,7 @@ def mostrar_balao_ajuda(message):
         enviado = bot.send_message(chat_id, ajuda_texto, parse_mode="Markdown")
         ultimo_balao_id[chat_id] = enviado.message_id
     except Exception as e:
-        print(f"Erro ao mostrar ou apagar balão: {e}")
+        print(f"Erro ao enviar balão: {e}")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
