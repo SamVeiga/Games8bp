@@ -1,9 +1,6 @@
 from flask import Flask, request
 import telebot
 import os
-import json
-from deep_translator import GoogleTranslator
-import langdetect
 
 # =======================================
 # CONFIGURAÇÕES INICIAIS
@@ -11,12 +8,6 @@ import langdetect
 TOKEN = os.getenv("BOT_TOKEN") or "7646672843:AAHckKPRXKDbEwbRGfY7KTtQEtw27jrQl_U"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
-
-# =======================================
-# LER COMANDOS UNO DE JSON
-# =======================================
-with open("comandos_uno.json", "r", encoding="utf-8") as f:
-    comandos_uno = json.load(f)
 
 # =======================================
 # COMANDO /jogos — Mostra o menu de jogos
@@ -47,16 +38,41 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# DETECTA COMANDOS DO UNO BOT
+# BALÃO DE AJUDA — Enviado sempre que o UNO Bot fala
 # =======================================
-@bot.message_handler(func=lambda message: message.text and message.text.startswith('/') and '@unobot' in message.text.lower())
-def traduzir_comando_unobot(message):
-    comando = message.text.strip().lower()
-    resposta = comandos_uno.get(comando)
-    if resposta:
-        bot.reply_to(message, f"💬 {resposta}")
-    else:
-        bot.reply_to(message, "❓ Comando do UNO Bot detectado, mas ainda sem tradução cadastrada.")
+ajuda_texto = (
+    "📘 *Comandos do UNO Bot*\n\n"
+    "`/join` ➕ Entrar\n"
+    "`/start` ▶️ Iniciar\n"
+    "`/skip` ⏩ Pular vez\n"
+    "`/kick` 👢 Expulsar\n"
+    "`/leave` 🚪 Sair\n"
+    "`/close` 🔒 Fechar lobby\n"
+    "`/open` 🔓 Reabrir lobby\n"
+    "`/ranking` 🏆 Pontuação\n"
+    "`/modes` 🎮 Modos de jogo\n"
+    "`/howto` 📘 Regras\n"
+    "`/settings` ⚙️ Regras/config\n"
+    "`/alert` 🔔 Notificar\n"
+    "`/multion` 📣 Múltiplos alertas\n"
+    "`/multioff` 🔕 Sem alertas\n"
+    "`/about` ℹ️ Sobre o bot\n"
+    "`/source` 💻 Código-fonte\n"
+    "`/news` 📰 Novidades"
+)
+
+ultimo_balao_id = {}
+
+@bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot" and m.text)
+def mostrar_balao_ajuda(message):
+    chat_id = message.chat.id
+    try:
+        if chat_id in ultimo_balao_id:
+            bot.delete_message(chat_id, ultimo_balao_id[chat_id])
+        enviado = bot.send_message(chat_id, ajuda_texto, parse_mode="Markdown")
+        ultimo_balao_id[chat_id] = enviado.message_id
+    except Exception as e:
+        print(f"Erro ao mostrar ou apagar balão: {e}")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
