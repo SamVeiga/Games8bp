@@ -41,18 +41,30 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# MENSAGENS — Tradução automática de bots (qualquer texto que não seja português)
+# MENSAGENS — Tradução automática para UNO Bot e bots oficiais
 # =======================================
 @bot.message_handler(func=lambda m: True)
-def traduzir_mensagens_de_bots(message):
+def traduzir_mensagens(message):
     texto = message.text
     if not texto:
         return
 
-    # Só traduz mensagens de outros bots
+    # Ignora mensagens do próprio bot para evitar loop
+    if message.from_user and message.from_user.id == bot.get_me().id:
+        return
+
+    # Traduz mensagens do UNO Bot pelo username 'unobot'
+    if message.from_user and message.from_user.username and message.from_user.username.lower() == "unobot":
+        try:
+            traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
+            bot.reply_to(message, f"🔁 {traducao}")
+        except Exception as e:
+            print(f"Erro ao traduzir UNO Bot: {e}")
+        return
+
+    # Traduz mensagens de bots oficiais (is_bot == True)
     if message.from_user and message.from_user.is_bot:
         try:
-            # Detecta idioma, tenta traduzir mesmo se falhar a detecção
             try:
                 idioma = langdetect.detect(texto)
             except:
@@ -62,7 +74,7 @@ def traduzir_mensagens_de_bots(message):
                 traducao = GoogleTranslator(source='auto', target='pt').translate(texto)
                 bot.reply_to(message, f"🔁 {traducao}")
         except Exception as e:
-            print(f"Erro ao traduzir: {e}")
+            print(f"Erro ao traduzir bot oficial: {e}")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
