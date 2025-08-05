@@ -41,44 +41,27 @@ def callback(call):
 # =======================================
 # BALÃO DE AJUDA FIXO — Toda vez que o UNO Bot responder
 # =======================================
-ajuda_texto = (
-    "📘 *Comandos do UNO Bot*
+ajuda_texto = """
+📘 *Comandos do UNO Bot*
 
-"
-    "`/join` ➕ Entrar
-"
-    "`/start` ▶️ Iniciar
-"
-    "`/skip` ⏩ Pular vez
-"
-    "`/kick` 👢 Expulsar
-"
-    "`/leave` 🚪 Sair
-"
-    "`/close` 🔒 Fechar lobby
-"
-    "`/open` 🔓 Reabrir lobby
-"
-    "`/ranking` 🏆 Pontuação
-"
-    "`/modes` 🎮 Modos de jogo
-"
-    "`/howto` 📘 Regras
-"
-    "`/settings` ⚙️ Regras/config
-"
-    "`/alert` 🔔 Notificar
-"
-    "`/multion` 📣 Múltiplos alertas
-"
-    "`/multioff` 🔕 Sem alertas
-"
-    "`/about` ℹ️ Sobre o bot
-"
-    "`/source` 💻 Código-fonte
-"
-    "`/news` 📰 Novidades"
-)
+`/join` ➕ Entrar
+`/start` ▶️ Iniciar
+`/skip` ⏩ Pular vez
+`/kick` 👢 Expulsar
+`/leave` 🚪 Sair
+`/close` 🔒 Fechar lobby
+`/open` 🔓 Reabrir lobby
+`/ranking` 🏆 Pontuação
+`/modes` 🎮 Modos de jogo
+`/howto` 📘 Regras
+`/settings` ⚙️ Regras/config
+`/alert` 🔔 Notificar
+`/multion` 📣 Múltiplos alertas
+`/multioff` 🔕 Sem alertas
+`/about` ℹ️ Sobre o bot
+`/source` 💻 Código-fonte
+`/news` 📰 Novidades
+"""
 
 ultimo_balao_id = {}
 
