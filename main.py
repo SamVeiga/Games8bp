@@ -52,8 +52,8 @@ def detectar_vencedor_unobot(message):
     texto_msg = message.text or ""
 
     try:
-        # Detectar padrão de vitória do UnoBot
-        match = re.search(r"(.+?) has won the game", texto_msg, re.IGNORECASE)
+        # Detectar padrão de vitória do UnoBot (ex: "Matheus won!")
+        match = re.search(r"(.+?) won!", texto_msg, re.IGNORECASE)
         if match:
             vencedor = match.group(1).strip()
             
