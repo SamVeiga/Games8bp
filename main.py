@@ -13,7 +13,8 @@ app = Flask(__name__)
 # =======================================
 # COMANDO /jogos — Mostra o menu de jogos
 # =======================================
-def enviar_menu_de_jogos(chat_id):
+@bot.message_handler(commands=['jogos'])
+def menu_de_jogos(message):
     markup = telebot.types.InlineKeyboardMarkup(row_width=1)
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
