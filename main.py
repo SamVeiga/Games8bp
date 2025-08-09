@@ -1,7 +1,7 @@
-
 from flask import Flask, request
 import telebot
 import os
+import re
 
 # =======================================
 # CONFIGURAÇÕES INICIAIS
@@ -13,8 +13,7 @@ app = Flask(__name__)
 # =======================================
 # COMANDO /jogos — Mostra o menu de jogos
 # =======================================
-@bot.message_handler(commands=['jogos'])
-def menu_de_jogos(message):
+def enviar_menu_de_jogos(chat_id):
     markup = telebot.types.InlineKeyboardMarkup(row_width=1)
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
@@ -22,7 +21,11 @@ def menu_de_jogos(message):
         telebot.types.InlineKeyboardButton("🙊  Jogo dos Emojis", callback_data="emotions"),
         telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", url="https://t.me/UnoGameBot")
     )
-    bot.send_message(message.chat.id, "🎮 Escolha um Jogo:", reply_markup=markup)
+    bot.send_message(chat_id, "🎮 Escolha um Jogo:", reply_markup=markup)
+
+@bot.message_handler(commands=['jogos'])
+def menu_de_jogos(message):
+    enviar_menu_de_jogos(message.chat.id)
 
 # =======================================
 # BOTÕES DO MENU
@@ -39,42 +42,35 @@ def callback(call):
     bot.send_message(call.message.chat.id, comando)
 
 # =======================================
-# BALÃO DE AJUDA FIXO — Toda vez que o UNO Bot responder
+# DETECÇÃO DE VENCEDOR DO UNO
 # =======================================
-ajuda_texto = """
-📘 *Comandos do UNO Bot*
-
-`/join` ➕ Entrar
-`/start` ▶️ Iniciar
-`/skip` ⏩ Pular vez
-`/kick` 👢 Expulsar
-`/leave` 🚪 Sair
-`/close` 🔒 Fechar lobby
-`/open` 🔓 Reabrir lobby
-`/ranking` 🏆 Pontuação
-`/modes` 🎮 Modos de jogo
-`/howto` 📘 Regras
-`/settings` ⚙️ Regras/config
-`/alert` 🔔 Notificar
-`/multion` 📣 Múltiplos alertas
-`/multioff` 🔕 Sem alertas
-`/about` ℹ️ Sobre o bot
-`/source` 💻 Código-fonte
-`/news` 📰 Novidades
-"""
-
-ultimo_balao_id = {}
+TROFEU_STICKER_ID = "CAACAgEAAxkBAAII2GiXJUtcpbS_fG2arXHW8zRF066PAAI5AwACdR4gRMnYSPTiUO3wNgQ"
 
 @bot.message_handler(func=lambda m: m.from_user and m.from_user.username == "UnoGameBot")
-def balao_ajuda_unobot(message):
+def detectar_vencedor_unobot(message):
     chat_id = message.chat.id
+    texto_msg = message.text or ""
+
     try:
-        if chat_id in ultimo_balao_id:
-            bot.delete_message(chat_id, ultimo_balao_id[chat_id])
-        enviado = bot.send_message(chat_id, ajuda_texto, parse_mode="Markdown")
-        ultimo_balao_id[chat_id] = enviado.message_id
+        # Detectar padrão de vitória do UnoBot
+        match = re.search(r"(.+?) has won the game", texto_msg, re.IGNORECASE)
+        if match:
+            vencedor = match.group(1).strip()
+            
+            mensagem_vitoria = (
+                f"🏆🎉 **{vencedor.upper()} É O CAMPEÃO DO UNO!** 🎉🏆\n\n"
+                f"🔥 Parabéns pela vitória esmagadora! 🔥"
+            )
+            bot.send_message(chat_id, mensagem_vitoria, parse_mode="Markdown")
+
+            # Enviar sticker de troféu
+            bot.send_sticker(chat_id, TROFEU_STICKER_ID)
+
+            # Enviar novamente o menu de jogos
+            enviar_menu_de_jogos(chat_id)
+
     except Exception as e:
-        print(f"Erro ao enviar balão: {e}")
+        print(f"Erro ao detectar vitória: {e}")
 
 # =======================================
 # WEBHOOK — Para funcionar no Render
