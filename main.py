@@ -18,25 +18,19 @@ def enviar_menu_de_jogos(chat_id):
     markup.add(
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
         telebot.types.InlineKeyboardButton("🪢  Jogo da Forca", callback_data="forca"),
-        telebot.types.InlineKeyboardButton("🙊  Jogo dos Emojis", callback_data="emotions"),
-        telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", url="https://t.me/UnoGameBot")
+        telebot.types.InlineKeyboardButton("❌⭕  Jogo da Velha", callback_data="velha"),
+        telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", callback_data="uno")
     )
     bot.send_message(chat_id, "🎮 Escolha um Jogo:", reply_markup=markup)
 
-@bot.message_handler(commands=['jogos'])
-def menu_de_jogos(message):
-    enviar_menu_de_jogos(message.chat.id)
-
-# =======================================
-# BOTÕES DO MENU
-# =======================================
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
     jogo = call.data
     comandos = {
         "show": "/quiz",
         "forca": "/forca",
-        "emotions": "/jogodoemotions"
+        "velha": "@xoBot play",
+        "uno": "/new@unopybot"
     }
     comando = comandos.get(jogo, '/comando')
     bot.send_message(call.message.chat.id, comando)
