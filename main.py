@@ -20,10 +20,10 @@ def build_menu_markup():
         telebot.types.InlineKeyboardButton("🎯  Jogo do Quiz", callback_data="show"),
         telebot.types.InlineKeyboardButton("🪢  Jogo da Forca", callback_data="forca"),
         telebot.types.InlineKeyboardButton("❌⭕  Jogo da Velha", callback_data="velha"),
-        telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", callback_data="uno")
+        telebot.types.InlineKeyboardButton("🃏  Jogo do UNO", callback_data="uno"),
+        telebot.types.InlineKeyboardButton("📒  Bobbie Goods", callback_data="bobbie_goods")  # Novo jogo
     )
     return markup
-
 
 def enviar_menu_de_jogos(chat_id):
     """Envia o menu de jogos para o chat_id fornecido (reutilizável)."""
@@ -53,8 +53,9 @@ def callback(call):
     comandos = {
         "show": "/quiz",
         "forca": "/forca",
-        "velha": "@xoBot",
-        "uno": "/new@unopybot"
+        "velha": "@xoBot play",
+        "uno": "/new@unopybot",
+        "bobbie_goods": "/start@DoodleGatorBot"  # Novo jogo
     }
     comando = comandos.get(jogo, '/comando')
     try:
