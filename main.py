@@ -53,7 +53,7 @@ def callback(call):
     comandos = {
         "show": "/quiz",
         "forca": "/forca",
-        "velha": "@xoBot play",
+        "velha": "@xoBot",
         "uno": "/new@unopybot",
         "bobbie_goods": "/start@DoodleGatorBot"  # Novo jogo
     }
